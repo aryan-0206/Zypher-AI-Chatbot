@@ -1,0 +1,150 @@
+.message-wrapper {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  gap: 1.25rem;
+  animation: messageAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.message-wrapper.user {
+  flex-direction: row-reverse;
+}
+
+.avatar-small {
+  width: 36px;
+  height: 36px;
+  background: var(--bg-glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.message-bubble {
+  max-width: 85%;
+  padding: 1.25rem 1.5rem;
+  border-radius: 22px;
+  position: relative;
+  line-height: 1.65;
+  font-size: 1rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--glass-border);
+}
+
+.message-bubble.user {
+  background: var(--grad-primary);
+  color: white;
+  border-top-right-radius: 4px;
+  border: none;
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);
+}
+
+.message-bubble.bot {
+  background: var(--bg-glass);
+  color: var(--text-main);
+  border-top-left-radius: 4px;
+  backdrop-filter: blur(12px);
+  background-image: var(--grad-surface);
+}
+
+.message-bubble.error {
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+/* Markdown Styling */
+.message-content {
+  overflow-wrap: break-word;
+}
+
+.message-content p {
+  margin-bottom: 1rem;
+}
+
+.message-content p:last-child {
+  margin-bottom: 0;
+}
+
+.message-content code {
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--accent-cyan);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9em;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.message-content pre {
+  background: #020617;
+  padding: 1.5rem;
+  border-radius: 16px;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.message-content pre code {
+  background: transparent !important;
+  color: #e2e8f0;
+  border: none;
+  padding: 0;
+  font-size: 0.85em;
+  line-height: 1.7;
+}
+
+.message-content h1,
+.message-content h2,
+.message-content h3 {
+  color: #fff;
+  margin: 1.5rem 0 1rem;
+  font-weight: 800;
+}
+
+.message-content ul,
+.message-content ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.message-content li {
+  margin-bottom: 0.5rem;
+}
+
+.message-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  opacity: 0.4;
+  font-size: 0.75rem;
+}
+
+.proc-time {
+  color: var(--accent-cyan);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.timestamp {
+  font-weight: 600;
+}
