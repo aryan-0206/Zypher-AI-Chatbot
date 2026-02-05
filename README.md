@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>README</title>
+  
 </head>
 <body>
   <h1>🤖 AI-Powered Chatbot - Full Stack Application</h1>
@@ -116,6 +115,6 @@
 
   <hr>
 
-  <p><strong>Built with ❤️ using Python &amp; React</strong></p>
+  <p><strong>Built with ❤️</strong></p>
 </body>
 </html>
