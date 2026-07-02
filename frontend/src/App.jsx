@@ -369,7 +369,7 @@ export default function App() {
       </div>
 
       {/* Sidebar Overlay */}
-      {isSidebarOpen && <div className="sidebar-overlay" />}
+      {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)} />}
 
       {/* ── Sidebar ── */}
       <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
@@ -381,6 +381,9 @@ export default function App() {
               <span className="sidebar-brand-name">Zypher AI</span>
               <span className="sidebar-brand-tag">Your AI Companion</span>
             </div>
+            <button className="sidebar-close-btn" onClick={() => setIsSidebarOpen(false)} title="Close History">
+              ✕
+            </button>
           </div>
           <button className="new-chat-btn" onClick={startNewChat} title="New Chat (Ctrl+K)">
             <span>✦</span> New Chat
@@ -485,24 +488,26 @@ export default function App() {
       {/* ── Main Content ── */}
       <main className="app">
         {/* History Toggle */}
-        <div ref={historyBtnRef} className="history-toggle-wrap">
-          <button
-            className="history-toggle"
-            onClick={e => { e.stopPropagation(); setIsSidebarOpen(v => !v); }}
-            aria-label="Toggle history"
-          >
-            <span className="history-toggle-icon">☰</span>
-            <span>History</span>
-            {conversations.length > 0 && (
-              <span style={{
-                background: 'var(--cyan)', color: '#000', borderRadius: '999px',
-                fontSize: '0.6rem', fontWeight: 800, padding: '0.1rem 0.4rem', marginLeft: '0.25rem'
-              }}>
-                {conversations.length}
-              </span>
-            )}
-          </button>
-        </div>
+        {!isSidebarOpen && (
+          <div ref={historyBtnRef} className="history-toggle-wrap">
+            <button
+              className="history-toggle"
+              onClick={e => { e.stopPropagation(); setIsSidebarOpen(v => !v); }}
+              aria-label="Toggle history"
+            >
+              <span className="history-toggle-icon">☰</span>
+              <span>History</span>
+              {conversations.length > 0 && (
+                <span style={{
+                  background: 'var(--cyan)', color: '#000', borderRadius: '999px',
+                  fontSize: '0.6rem', fontWeight: 800, padding: '0.1rem 0.4rem', marginLeft: '0.25rem'
+                }}>
+                  {conversations.length}
+                </span>
+              )}
+            </button>
+          </div>
+        )}
 
         <div className="chat-container">
           <div className="messages-container">
@@ -519,13 +524,6 @@ export default function App() {
                   <p>Your intelligent companion — ask me anything in English, <strong>हिंदी</strong>, or Hinglish!</p>
                   <span className="welcome-lang-badge">🌐 Speaks EN · HI · Hinglish · and more</span>
                 </div>
-
-                {modelInfo && (
-                  <div className="model-badge" style={{ marginBottom: '1.5rem' }}>
-                    <div className="model-badge-dot" />
-                    {modelInfo.replace('models/', '')}
-                  </div>
-                )}
 
                 <div className="suggestion-grid">
                   {SUGGESTIONS.map((s, i) => (
@@ -573,12 +571,6 @@ export default function App() {
 
           {/* Input */}
           <div className="input-area">
-            {modelInfo && messages.length > 0 && (
-              <div className="model-badge" style={{ marginBottom: '0.5rem' }}>
-                <div className="model-badge-dot" />
-                {modelInfo.replace('models/', '')}
-              </div>
-            )}
             <ChatInput onSendMessage={sendMessage} isLoading={isLoading} />
             <p className="input-footer">Zypher AI can make mistakes. Always verify important information.</p>
           </div>

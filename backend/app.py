@@ -124,8 +124,41 @@ def is_image_request(text: str) -> tuple[bool, str]:
             return True, subject or text
     return False, ''
 
+def generate_image_prompt_with_llm(user_message: str, history: list) -> str:
+    """Use Gemini to generate a descriptive English image prompt from the user message and history."""
+    try:
+        context = ""
+        for msg in history[-5:]:
+            context += f"{'User' if msg['role'] == 'user' else 'AI'}: {msg['text']}\n"
+        context += f"User: {user_message}"
+        
+        prompt = f"""Based on the following conversation history, the user is requesting an image.
+Generate a concise, descriptive English prompt (max 10 words) that describes the subject of the image they want.
+Output ONLY the descriptive prompt, nothing else.
+
+Conversation:
+{context}
+
+Descriptive image prompt:"""
+
+        response = client.models.generate_content(
+            model='models/gemini-2.5-flash',
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=0.3,
+                max_output_tokens=30
+            )
+        )
+        if response.text:
+            cleaned = response.text.strip().strip('"\'')
+            logger.info(f"LLM generated image prompt: {cleaned}")
+            return cleaned
+    except Exception as e:
+        logger.error(f"Failed to generate image prompt with LLM: {e}")
+    return user_message
+
 def get_image_url(query: str) -> str | None:
-    """Generate or fetch an image for the given query using Picsum/Unsplash as reliable fallback."""
+    """Generate or fetch an image for the given query using Pollinations AI as reliable fallback."""
     try:
         # First try Gemini imagen if available
         img_response = client.models.generate_images(
@@ -140,11 +173,11 @@ def get_image_url(query: str) -> str | None:
             b64 = base64.b64encode(img.image.image_bytes).decode('utf-8')
             return f"data:image/png;base64,{b64}"
     except Exception as e:
-        logger.info(f"Gemini imagen not available ({e}), falling back to Unsplash")
+        logger.info(f"Gemini imagen not available ({e}), falling back to Pollinations AI")
 
-    # Fallback: Unsplash source (free, no API key needed)
+    # Fallback: Pollinations AI (free AI image generator, no API key needed)
     encoded = urllib.parse.quote(query)
-    return f"https://source.unsplash.com/800x500/?{encoded}"
+    return f"https://image.pollinations.ai/prompt/{encoded}?width=800&height=500&nologo=true"
 
 # ─── Chat Engine ───────────────────────────────────────────────────────────────
 class ZypherEngine:
@@ -268,7 +301,11 @@ def chat():
         image_url = None
 
         if wants_image:
-            image_url = get_image_url(image_subject)
+            history = zypher.get_session_history(session_id)
+            smart_subject = generate_image_prompt_with_llm(user_message, history)
+            image_url = get_image_url(smart_subject)
+            if image_url:
+                image_subject = smart_subject
 
         # Get text response
         result = zypher.get_response(user_message, session_id)
