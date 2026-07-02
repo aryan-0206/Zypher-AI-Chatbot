@@ -443,9 +443,31 @@ def serve_react(path):
     return send_from_directory(dist_dir, 'index.html')
 
 # ─── Entry Point ────────────────────────────────────────────────────────────────
+def start_frontend():
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true': return
+    try:
+        import subprocess
+        frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
+        subprocess.Popen(['cmd', '/c', f'cd /d {frontend_dir} && npm run dev'],
+                        shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        logger.info("Frontend bridge established.")
+    except Exception as e:
+        logger.error(f"Frontend failed: {e}")
+
+def open_browser():
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true': return
+    import webbrowser
+    time.sleep(5)
+    webbrowser.open('http://localhost:3000')
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', os.environ.get('API_PORT', 5001)))
     is_production = os.environ.get('FLASK_ENV') == 'production'
+
+    if not is_production:
+        start_frontend()
+        import threading
+        threading.Thread(target=open_browser, daemon=True).start()
 
     logger.info(f"🚀 Zypher AI v2.0 online | Port {port} | Mode: {'PROD' if is_production else 'DEV'}")
 
@@ -454,3 +476,4 @@ if __name__ == '__main__':
         host='0.0.0.0',
         port=port
     )
+
