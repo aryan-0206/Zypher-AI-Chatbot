@@ -7,18 +7,18 @@ echo.
 
 echo [1/2] Starting Backend Server...
 cd backend
-if not exist "venv" (
-    echo Error: Virtual environment (venv) not found.
-    echo Please run 'python -m venv venv' inside backend folder first.
-    pause
-    exit /b
-)
+if exist "venv" goto skip_error
+echo Error: Virtual environment (venv) not found.
+echo Please run 'python -m venv venv' inside backend folder first.
+pause
+exit /b
+:skip_error
 
 :: Run the backend which is already programmed to start the frontend automatically
 start /min "Zypher AI Backend" cmd /k "venv\Scripts\activate && python app.py"
 
 echo.
-echo [2/2] Launching Frontend & Browser...
+echo [2/2] Launching Frontend and Browser...
 echo Wait a few seconds for the application to initialize...
 echo.
 echo ==========================================
